@@ -8,11 +8,11 @@
 
 Python 3 должен быть уже установлен. Затем используйте pip (или pip3, есть конфликт с Python2) для установки
 зависимостей:
-Так же необходимо наличие установки брокера сообщений **RabbitMQ** [ссылка](https://github.com/rabbitmq/rabbitmq-server/releases/tag/v3.12.7)
 
 ```bash
 $ pip install -r requirements.txt
 ``` 
+Так же необходимо наличие установки брокера сообщений **RabbitMQ** [ссылка](https://github.com/rabbitmq/rabbitmq-server/releases/tag/v3.12.7)
 
 Создайте `.env` файл рядом с `manage.py` и добавьте:
 
