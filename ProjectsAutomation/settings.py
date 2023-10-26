@@ -25,6 +25,13 @@ DEBUG = env.bool('DEBUG', default='True')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default='127.0.0.1')
 
+
+# Celery RabbitMQ
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_TRACK_STARTED = True
+
 # Application definition
 
 INSTALLED_APPS = [

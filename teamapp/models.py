@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .tasks import send_invitation_task
 
 
 class ProjectManager(models.Model):
@@ -97,3 +100,9 @@ class Invitation(models.Model):
     class Meta:
         verbose_name = 'Приглашение'
         verbose_name_plural = 'Приглашения'
+
+
+@receiver(post_save, sender=Invitation)
+def trigger_new_invitation(sender, instance, created, **kwargs):
+    if created:
+        send_invitation_task.delay(instance.id)
