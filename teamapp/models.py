@@ -47,7 +47,8 @@ class Rank(models.Model):
 class Student(models.Model):
     name = models.CharField(max_length=20, verbose_name='Имя')
     surname = models.CharField(max_length=20, verbose_name='Фамилия')
-    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, verbose_name='Уровень ученика', related_name='ranks')
+    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, verbose_name='Уровень ученика',
+                             related_name='student_ranks')
     mail = models.CharField(max_length=70, verbose_name='Электронная почта')
     telegram = models.CharField(max_length=70, verbose_name='Телеграм', blank=True)
     time = models.ForeignKey(FreeTimeTable, on_delete=models.SET_NULL, verbose_name='Время созванивания в проекте',
@@ -68,10 +69,29 @@ class Account(models.Model):
                                    related_name='students')
 
 
+class Project(models.Model):
+    name = models.CharField(verbose_name='Название проекта', max_length=20)
+    description = models.TextField(verbose_name='Описание проекта', max_length=20)
+    time = models.TimeField(verbose_name='Время для созванивания')
+    week = models.IntegerField(verbose_name='Номер недели')
+    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, verbose_name='Уровень ученика',
+                             related_name='project_ranks')
+    project_manager = models.ManyToManyField(ProjectManager, verbose_name='Менеджер')
+
+    def __str__(self):
+        return f'{self.name}. Время проведения {self.time}. Неделя в месяце{self.week}. {self.rank}'
+
+    class Meta:
+        verbose_name = 'Проект'
+        verbose_name_plural = 'Проекты'
+
+
 class Team(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
+    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, null=True)
     time = models.ForeignKey(FreeTimeTable, on_delete=models.CASCADE, verbose_name='Время созванивания')
     project_manager = models.ForeignKey(ProjectManager, on_delete=models.CASCADE, verbose_name='Менеджер',
-                                        related_name='managers')
+                                        related_name='team_managers')
     first_student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name='Первый ученик',
                                       related_name='first_students')
     second_student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name='Второй ученик',

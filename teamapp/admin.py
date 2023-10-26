@@ -1,5 +1,5 @@
 from django.contrib import admin
-from teamapp.models import Student, ProjectManager, Team, FreeTimeTable, Invitation, Rank
+from teamapp.models import Student, ProjectManager, Team, FreeTimeTable, Invitation, Rank, Project
 
 
 @admin.register(Student)
@@ -31,3 +31,10 @@ class InvitationAdmin(admin.ModelAdmin):
 @admin.register(Rank)
 class RankAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    raw_id_fields = ['rank', ]
+    search_fields = ['name', ]
+    filter_horizontal = ['project_manager']
