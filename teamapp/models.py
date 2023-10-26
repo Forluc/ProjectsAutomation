@@ -25,10 +25,13 @@ class FreeTimeTable(models.Model):
     week = models.IntegerField(verbose_name='Номер недели')
 
     def __str__(self):
-        return f'{self.week} неделя. На {self.time} есть {self.count} слота.'
+        if self.count:
+            return f'{self.week} неделя. На {self.time} есть {self.count} слот(-а).'
+        else:
+            return f'{self.week} неделя. На {self.time} нет слотов'
 
     class Meta:
-        ordering = ['count', ]
+        ordering = ['week', 'time']
         verbose_name = 'Слот свободного времени'
         verbose_name_plural = 'Слоты свободных времен'
 
