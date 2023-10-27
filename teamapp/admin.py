@@ -1,17 +1,41 @@
+from django.utils.html import format_html
+from django.utils.text import slugify
 from django.contrib import admin
-from teamapp.models import Student, ProjectManager, Team, FreeTimeTable, Invitation, Rank, Project
+from .models import Project, ProjectManager, Rank, Student
+from .forms import ProjectForm
 
 
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    search_fields = ['name', 'surname', 'rank', 'mail', ]
-    raw_id_fields = ['rank', 'time']
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    search_fields = ('name', 'description')
+    list_filter = ('week', 'rank', 'project_manager')
+    form = ProjectForm
+
+    list_display = ('name', 'description', 'student_count', 'week', 'rank', 'get_iteration_link')
+
+    def get_iteration_link(self, obj):
+        url = f"/admin/start-iteration/{slugify(obj.name)}"
+        return format_html('<a href="{}">Запустить интерацию</a>', url)
+    get_iteration_link.short_description = 'Запустить интерацию'
 
 
 @admin.register(ProjectManager)
 class ProjectManagerAdmin(admin.ModelAdmin):
-    search_fields = ['name', 'surname', 'start_time', ]
+    search_fields = ['first_name', 'last_name', 'start_time', ]
 
+
+@admin.register(Rank)
+class RankAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    search_fields = ['first_name', 'last_name', 'rank', 'mail', ]
+    raw_id_fields = ['rank']
+
+
+'''
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
@@ -38,3 +62,5 @@ class ProjectAdmin(admin.ModelAdmin):
     raw_id_fields = ['rank', ]
     search_fields = ['name', ]
     filter_horizontal = ['project_manager']
+
+# '''
