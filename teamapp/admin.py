@@ -1,7 +1,7 @@
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.contrib import admin
-from .models import Project, ProjectManager, Rank, Student
+from .models import Project, ProjectManager, Rank, Student, Invitation
 from .forms import ProjectForm
 
 
@@ -14,7 +14,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'student_count', 'week', 'rank', 'get_iteration_link')
 
     def get_iteration_link(self, obj):
-        url = f"/admin/start-iteration/{slugify(obj.name)}"
+        url = f"/admin/start-iteration/{slugify(obj.id)}"
         return format_html('<a href="{}">Запустить интерацию</a>', url)
     get_iteration_link.short_description = 'Запустить интерацию'
 
@@ -35,6 +35,11 @@ class StudentAdmin(admin.ModelAdmin):
     raw_id_fields = ['rank']
 
 
+@admin.register(Invitation)
+class InvitationAdmin(admin.ModelAdmin):
+    raw_id_fields = ['student', 'project']
+
+
 '''
 
 @admin.register(Team)
@@ -45,11 +50,6 @@ class TeamAdmin(admin.ModelAdmin):
 @admin.register(FreeTimeTable)
 class FreeTimeTableAdmin(admin.ModelAdmin):
     search_fields = ['week', ]
-
-
-@admin.register(Invitation)
-class InvitationAdmin(admin.ModelAdmin):
-    raw_id_fields = ['team', 'student']
 
 
 @admin.register(Rank)

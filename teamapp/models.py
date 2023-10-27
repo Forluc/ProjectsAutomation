@@ -1,20 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-from django.urls import reverse
 from django.dispatch import receiver
 from .tasks import send_invitation_task
 
 
 class ProjectManager(User):
-    # name = models.CharField(verbose_name='Имя', max_length=20)  ## Дублируют  first_name и last_name
-    # surname = models.CharField(verbose_name='Фамилия', max_length=20) ## Дублируют  first_name и last_name
     start_time = models.TimeField(verbose_name='Время начала рабочего дня')
     end_time = models.TimeField(verbose_name='Время конца рабочего дня')
     telegram = models.CharField(verbose_name='Телеграм', max_length=70, blank=True)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name} {self.start_time}-{self.end_time}'
+        return f'{self.username} ({self.start_time}-{self.end_time})'
 
     class Meta:
         verbose_name = 'Менеджер'
@@ -33,11 +30,8 @@ class Rank(models.Model):
 
 
 class Student(User):
-    # name = models.CharField(max_length=20, verbose_name='Имя') ## Дублируют  first_name и last_name
-    # surname = models.CharField(max_length=20, verbose_name='Фамилия') ## Дублируют  first_name и last_name
     rank = models.ForeignKey(Rank, on_delete=models.CASCADE, verbose_name='Уровень ученика',
                              related_name='student_ranks')
-    # mail = models.CharField(max_length=70, verbose_name='Электронная почта') ## Дублируют
     telegram = models.CharField(max_length=70, verbose_name='Телеграм', blank=True)
 
     def __str__(self):
@@ -89,20 +83,6 @@ class StudentAvailability(models.Model):
         return f'{self.student.username} - {self.time_slot}'
 
 
-class StudentProject(models.Model):
-    # Модель используется для отслеживания, в каких проектах участвовал ученик
-    # что бы в дальнейшем, не отправлять ему повторного приглашения на тот же проект
-
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('student', 'project',)
-
-    def __str__(self):
-        return f'{self.student.username} - {self.project.title}'
-
-
 class Team(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student)
@@ -120,11 +100,26 @@ class Team(models.Model):
         verbose_name_plural = 'Команды'
 
 
+class StudentProject(models.Model):
+    # Модель используется для отслеживания, в каких проектах участвовал ученик
+    # что бы в дальнейшем, не отправлять ему повторного приглашения на тот же проект
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('student', 'project',)
+
+    def __str__(self):
+        return f'{self.student.username} - {self.project.title}'
+
+
 class Invitation(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name='Проект')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name='Ученик',
                                 related_name='invite_students')
-    # is_sent = models.BooleanField(default=False, verbose_name='Отправлено')
+    invitation_date = models.DateField(verbose_name='Дата последнего уведомления')
 
     def __str__(self):
         return f'{self.project} {self.student}'
@@ -134,11 +129,14 @@ class Invitation(models.Model):
         verbose_name_plural = 'Приглашения'
 
 
+'''
+# Для внешней рассылки
 @receiver(post_save, sender=Invitation)
 def trigger_new_invitation(sender, instance, created, **kwargs):
     if created:
         send_invitation_task.delay(instance.id)
 
+# '''
 
 '''
 class FreeTimeTable(models.Model):
