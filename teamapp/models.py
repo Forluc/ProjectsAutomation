@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -50,6 +52,16 @@ class Project(models.Model):
     rank = models.ForeignKey(Rank, on_delete=models.CASCADE, verbose_name='Уровень ученика',
                              related_name='project_ranks')
     project_manager = models.ManyToManyField(ProjectManager, verbose_name='Менеджер')
+
+    def students_not_invited(self):
+        one_month_ago = timezone.now() - timedelta(days=30)
+        students_not_invited_count = Student.objects.filter(rank=self.rank).exclude(
+            invite_students__invitation_date__gt=one_month_ago,
+            invite_students__project=self
+        ).count()
+
+        return students_not_invited_count
+    students_not_invited.short_description = 'Без приглашений'
 
     def __str__(self):
         return self.name

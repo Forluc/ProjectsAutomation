@@ -41,4 +41,4 @@ def start_iteration(request, id):
             invitation_date=timezone.now().date()
         )
 
-    return HttpResponseRedirect("/admin/")
+    return HttpResponseRedirect("/admin/teamapp/project/")

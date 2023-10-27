@@ -11,7 +11,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter = ('week', 'rank', 'project_manager')
     form = ProjectForm
 
-    list_display = ('name', 'description', 'student_count', 'week', 'rank', 'get_iteration_link')
+    list_display = ('name', 'description', 'student_count', 'week', 'rank', 'students_not_invited', 'get_iteration_link')
 
     def get_iteration_link(self, obj):
         url = f"/admin/start-iteration/{slugify(obj.id)}"
