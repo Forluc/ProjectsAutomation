@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from teamapp.views import start_iteration, home
 
 urlpatterns = [
+    path('admin/start-iteration/<str:id>', start_iteration, name='start-iteration'),
     path('admin/', admin.site.urls),
+    path('', home, name='home'),
 ]
