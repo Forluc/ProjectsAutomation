@@ -28,7 +28,7 @@ def start_iteration(request, id):
 
     # Отбросим студентов, которые получали приглашения в течение последнего месяца
     recent_invitations = Invitation.objects.filter(
-        student__in=students_to_invite, 
+        student__in=students_to_invite,
         invitation_date__gte=one_month_ago
     ).values_list('student', flat=True)
     students_to_invite = students_to_invite.exclude(id__in=recent_invitations)
