@@ -47,12 +47,12 @@ class InvitationAdmin(admin.ModelAdmin):
 class TimeSlotAdmin(admin.ModelAdmin):
     pass
 
-
+'''
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     raw_id_fields = ['time', 'project_manager', 'first_student', 'second_student', 'third_student', ]
     
-'''
+
 @admin.register(FreeTimeTable)
 class FreeTimeTableAdmin(admin.ModelAdmin):
     pass
