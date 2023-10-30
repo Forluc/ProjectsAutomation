@@ -1,7 +1,7 @@
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.contrib import admin
-from .models import Project, ProjectManager, Rank, Student, Invitation, Team
+from .models import Project, ProjectManager, Rank, Student, Invitation
 from .forms import ProjectForm
 
 
