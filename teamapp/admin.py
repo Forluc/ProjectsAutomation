@@ -40,8 +40,8 @@ class InvitationAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']
 
 
-'''
 
+'''
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     raw_id_fields = ['time', 'project_manager', 'first_student', 'second_student', 'third_student', ]
