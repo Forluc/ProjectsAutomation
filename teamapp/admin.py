@@ -1,7 +1,10 @@
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django.contrib import admin
-from .models import Project, ProjectManager, Rank, Student, Invitation
+from .models import (
+    Project, ProjectManager, Rank,
+    Student, Invitation, TimeSlot, Team,
+    )
 from .forms import ProjectForm
 
 
@@ -40,16 +43,19 @@ class InvitationAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']
 
 
+@admin.register(TimeSlot)
+class TimeSlotAdmin(admin.ModelAdmin):
+    pass
 
-'''
+
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     raw_id_fields = ['time', 'project_manager', 'first_student', 'second_student', 'third_student', ]
-
-
+    
+'''
 @admin.register(FreeTimeTable)
 class FreeTimeTableAdmin(admin.ModelAdmin):
-    search_fields = ['week', ]
+    pass
 
 
 @admin.register(Rank)

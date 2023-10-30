@@ -49,3 +49,23 @@ class ProjectForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class WeekSelectForm(forms.Form):
+    # Форма для выбора недели который будет предоставлен в приглашении
+
+    week = forms.ChoiceField(choices=[], widget=forms.RadioSelect, label="")
+
+    def __init__(self, weeks, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['week'].choices = [(i, week) for i, week in enumerate(weeks)]
+
+
+class TimeSelectForm(forms.Form):
+    # Форма для выбора недели который будет предоставлен в приглашении
+
+    time = forms.MultipleChoiceField(choices=[], widget=forms.CheckboxSelectMultiple, label="")
+
+    def __init__(self, week, times, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['time'].choices = [(i, time) for i, time in enumerate(times)]
