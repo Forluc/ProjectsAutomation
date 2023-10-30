@@ -16,10 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from teamapp.views import start_iteration, home
+from teamapp.views import (
+    home,
+    iteration_starter, vote_resolver,
+    project_view, week_select_view, time_select_view
+)
 
 urlpatterns = [
-    path('admin/start-iteration/<str:id>', start_iteration, name='start-iteration'),
+    path('project/<int:project_id>/week_select/', week_select_view, name='week_select'),
+    path('project/<int:project_id>/time_select/<int:week>/', time_select_view, name='time_select'),
+    path('project/<int:project_id>/vote_resolve/<int:week>/<str:vote>/', vote_resolver, name='vote_resolve'),
+    path('project/<int:id>', project_view, name='project-view'),
+    path('admin/start-iteration/<int:id>', iteration_starter, name='start-iteration'),
     path('admin/', admin.site.urls),
     path('', home, name='home'),
 ]

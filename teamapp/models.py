@@ -85,8 +85,10 @@ class StudentAvailability(models.Model):
     # Хранит периоды которые ученик выбрал возможными для текущего проекта
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    week = models.CharField(verbose_name='Дата начала', max_length=20)
+    vote_date = models.DateField(verbose_name='Дата выбора')
 
     class Meta:
         unique_together = ('student', 'time_slot', 'project')
@@ -102,10 +104,10 @@ class Team(models.Model):
     start_date = models.DateField(verbose_name='День начала проекта')
     project_manager = models.ForeignKey(ProjectManager, on_delete=models.CASCADE, verbose_name='Менеджер',
                                         related_name='team_managers')
-    info = models.TextField(verbose_name='Описание проекта', max_length=200)
+    info = models.TextField(verbose_name='Командная инфа', max_length=200)
 
     def __str__(self):
-        return f'{self.project} - {self.project_manager} - {self.start_date} - {self.meeting_time}'
+        return f'{self.project} - {self.project_manager.username} ({self.start_date} | {self.meeting_time})'
 
     class Meta:
         verbose_name = 'Команда'
@@ -147,32 +149,5 @@ class Invitation(models.Model):
 def trigger_new_invitation(sender, instance, created, **kwargs):
     if created:
         send_invitation_task.delay(instance.id)
-
-# '''
-
-'''
-class FreeTimeTable(models.Model):
-    time = models.TimeField(verbose_name='Слот свободного времени', db_index=True)
-    count = models.IntegerField(verbose_name='Количество слотов', default=0)
-    week = models.IntegerField(verbose_name='Номер недели')
-
-    def __str__(self):
-        if self.count:
-            return f'{self.week} неделя. На {self.time} есть {self.count} слот(-а).'
-        else:
-            return f'{self.week} неделя. На {self.time} нет слотов'
-
-    class Meta:
-        ordering = ['week', 'time']
-        verbose_name = 'Слот свободного времени'
-        verbose_name_plural = 'Слоты свободных времен'
-
-
-
-class Account(models.Model):
-    login = models.CharField(verbose_name='Логин', max_length=20)
-    password = models.CharField(verbose_name='Пароль', max_length=20)
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True, verbose_name='Пользователь',
-                                   related_name='students')
 
 # '''
