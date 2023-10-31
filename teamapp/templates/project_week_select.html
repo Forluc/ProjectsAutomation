@@ -1,18 +1,10 @@
-<!doctype html>
-<html lang="ru">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base_generic.html" %}
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Выбор недели | Приглашение к участию в проекте{% endblock %}
 
-    <title>Выбор недели | Приглашение к участию в проекте</title>
-</head>
-<body>
+{% block content %}
 <div class="container pt-5">
-  <p>Т.к. Вы ещё не участвовали в этом проекте, предлагаем Вам выбрать доступную неделю и получить этот опыт.</p> 
+  <p>Т.к. Вы ещё не участвовали в этом проекте, предлагаем Вам выбрать доступную неделю и получить этот опыт.</p>
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">{{ project.name }}</h5>  <!-- Название проекта -->
@@ -28,9 +20,4 @@
         </div>
     </div>
 </div>
-
-<!-- Optional JavaScript; choose one of the two! -->
-<!-- Option 1: Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

@@ -24,6 +24,7 @@ def create_board(name, desc, id_organization):
     #print(response.text)
     return response
 
+
 def delete_workspace(id):
     url = f"https://api.trello.com/1/organizations/{id}"
     query = {'key': trello_key,
@@ -31,7 +32,7 @@ def delete_workspace(id):
             }
     response = requests.request("DELETE", url, params=query)
     response.raise_for_status()
-    
+
 
 projects = Project.objects.all()
 for project in projects:
