@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from datetime import timedelta, datetime
 from .forms import WeekSelectForm, TimeSelectForm, StudentRegisterForm, LoginForm
-from .models import Project, Invitation, Student, StudentVote, Team, StudentProject, StudentAvailability
+from .models import Project, Invitation, Student, StudentVote, Team
 from .trello import create_workspace, create_board
 
 

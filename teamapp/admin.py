@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import (
     Project, ProjectManager, Rank,
     Student, Invitation, Team, StudentVote
-    )
+)
 from .forms import ProjectForm
 
 
@@ -14,11 +14,13 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter = ('week', 'rank', 'project_manager')
     form = ProjectForm
 
-    list_display = ('name', 'description', 'student_count', 'week', 'rank', 'students_not_invited', 'get_iteration_link')
+    list_display = (
+        'name', 'description', 'student_count', 'week', 'rank', 'students_not_invited', 'get_iteration_link')
 
     def get_iteration_link(self, obj):
         url = f"/admin/start-iteration/{slugify(obj.id)}"
         return format_html('<a href="{}">Запустить интерацию</a>', url)
+
     get_iteration_link.short_description = 'Запустить интерацию'
 
 
@@ -42,17 +44,12 @@ class StudentAdmin(admin.ModelAdmin):
 class InvitationAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']
 
-    
+
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     pass
-  
-  
-@admin.register(TimeSlot)
-class TimeSlotAdmin(admin.ModelAdmin):
-    pass
 
-  
+
 @admin.register(StudentVote)
 class StudentVoteAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']
