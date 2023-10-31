@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
 from teamapp.views import (
     home,
     iteration_starter, vote_resolver,
-    project_view, week_select_view, time_select_view
+    project_view, week_select_view, time_select_view, user_login
 )
 
 urlpatterns = [
@@ -29,5 +30,7 @@ urlpatterns = [
     path('project/<int:id>', project_view, name='project-view'),
     path('admin/start-iteration/<int:id>', iteration_starter, name='start-iteration'),
     path('admin/', admin.site.urls),
+    path('login/', user_login),
     path('', home, name='home'),
+    
 ]

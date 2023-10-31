@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Вход в аккаунт</title>
+</head>
+<body>
+
+<div id="content">
+    <h1>Вход</h1>
+    <p>Пожалуйста, введите данные, чтобы войти:</p>
+    <form action="." method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><input type="submit" value="Войти"></p>
+    </form>
+</div>
+</body>
+</html>
