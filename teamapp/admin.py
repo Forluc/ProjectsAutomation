@@ -42,12 +42,17 @@ class StudentAdmin(admin.ModelAdmin):
 class InvitationAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']
 
-
+    
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     pass
+  
+  
+@admin.register(TimeSlot)
+class TimeSlotAdmin(admin.ModelAdmin):
+    pass
 
-
+  
 @admin.register(StudentVote)
 class StudentVoteAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']

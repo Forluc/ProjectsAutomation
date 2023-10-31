@@ -83,3 +83,8 @@ class TimeSelectForm(forms.Form):
     def __init__(self, times, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['time'].choices = [(i, time) for i, time in enumerate(times)]
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)

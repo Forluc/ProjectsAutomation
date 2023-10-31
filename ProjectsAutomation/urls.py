@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
+
 from teamapp.views import (
     home, register, logout_view,
     iteration_starter, vote_resolver,
-    project_view, week_select_view, time_select_view
+    project_view, week_select_view, time_select_view, user_login
 )
 
 urlpatterns = [
@@ -34,4 +35,5 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path("register/", register, name="register"),
     path('', home, name='home'),
+    
 ]

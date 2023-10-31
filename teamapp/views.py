@@ -2,14 +2,13 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from datetime import timedelta, datetime
-
-from .forms import WeekSelectForm, TimeSelectForm, StudentRegisterForm
-from .models import (Project, Invitation, Student, StudentVote, Team)
-from .trello import (create_workspace, create_board)
+from .forms import WeekSelectForm, TimeSelectForm, StudentRegisterForm, LoginForm
+from .models import Project, Invitation, Student, StudentVote, Team, StudentProject, StudentAvailability
+from .trello import create_workspace, create_board
 
 
 @login_required(login_url='/login/')
@@ -256,6 +255,7 @@ def project_view(request, id):
         project_id=id,
         vote_date__gte=thirty_days_ago
         )
+    
     # Проверяем, является ли Студент частью команды для этого проекта
     is_part_of_team = Team.objects.filter(project_id=id, students=student).exists()
 
@@ -282,3 +282,33 @@ def project_view(request, id):
             'current_team': current_team,
             }
         return render(request, "project_view.html", context)
+      
+    '''
+    project = Project.objects.get(id=id)
+    context = {
+        'project': project,
+    }
+
+    # return render(request, 'project_view.html', context=context)
+    return week_render
+    # '''
+
+
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(username=cd['username'], password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponse('Authenticated successfully')
+                else:
+                    return HttpResponse('Disabled account')
+            else:
+                return HttpResponse('Invalid login')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
