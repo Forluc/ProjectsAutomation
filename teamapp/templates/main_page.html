@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+
+{% block title %}MainPage{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+      <div class="col-md-4">
+        <h1>Main Page</h1>
+        <br>
+        
+        <h3>Приглашения</h3>
+        <ul>
+        {% for invitation in invitations %}
+            <li>
+                <a href="{% url 'project-view' invitation.project.id %}">
+                    {{ invitation.project.name }}
+                </a>
+            </li>
+        {% empty %}
+            <li>приглашений нет</li>
+        {% endfor %}
+        </ul>
+
+        <h3>Текущие</h3>
+        <ul>
+        {% for project in current_projects %}
+            <li>
+                <a href="{% url 'project-view' project.project.id %}">
+                    {{ project.project.name }}
+                </a>
+            </li>
+        {% empty %}
+            <li>текущих проектов нет</li>
+        {% endfor %}
+        </ul>
+
+        <h3>Завершёные</h3>
+        <ul>
+        {% for project in finished_projects %}
+            <li>
+                <a href="{% url 'project_detail' project.project.id %}">
+                    {{ project.project.name }}
+                </a>
+            </li>
+        {% empty %}
+            <li>завершёных проектов нет</li>
+        {% endfor %}
+        </ul>
+
+      </div>
+  </div>
+</div>
+{% endblock %}

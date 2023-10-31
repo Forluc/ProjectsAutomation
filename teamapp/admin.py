@@ -3,7 +3,7 @@ from django.utils.text import slugify
 from django.contrib import admin
 from .models import (
     Project, ProjectManager, Rank,
-    Student, Invitation, TimeSlot, Team,
+    Student, Invitation, Team, StudentVote
     )
 from .forms import ProjectForm
 
@@ -42,31 +42,19 @@ class StudentAdmin(admin.ModelAdmin):
 class InvitationAdmin(admin.ModelAdmin):
     raw_id_fields = ['student', 'project']
 
-
+    
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
+    pass
+  
+  
 @admin.register(TimeSlot)
 class TimeSlotAdmin(admin.ModelAdmin):
     pass
 
-'''
-@admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
-    raw_id_fields = ['time', 'project_manager', 'first_student', 'second_student', 'third_student', ]
-    
-
-@admin.register(FreeTimeTable)
-class FreeTimeTableAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Rank)
-class RankAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
-    raw_id_fields = ['rank', ]
-    search_fields = ['name', ]
-    filter_horizontal = ['project_manager']
-
-# '''
+  
+@admin.register(StudentVote)
+class StudentVoteAdmin(admin.ModelAdmin):
+    raw_id_fields = ['student', 'project']
+    list_display = ['project', 'week', 'student', 'time_slot']
+    list_filter = ['project', 'student']

@@ -1,19 +1,33 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Project
+from .models import Project, Rank, Student
+
+
+class StudentRegisterForm(UserCreationForm):
+    telegram = forms.CharField(max_length=70, required=False)
+    rank = forms.ModelChoiceField(queryset=Rank.objects.all())
+
+    class Meta:
+        model = Student
+        fields = ["username", "first_name", "last_name", "email", "telegram", "rank", "password1", "password2"]
 
 
 def get_week_choices():
     # Формируем список из дат начала недели
-
     choices = []
-    for i in range(1, 7):  # Следующие шесть недель
-        start_date = datetime.now() + timedelta(weeks=i)
-        # week_number = start_date.isocalendar()[1]
-        # choices.append((week_number, start_date.strftime('%Y-%m-%d')))
+    today = datetime.now()
+
+    # Вычисляем количество дней до следующего понедельника
+    days_ahead = 7 - today.weekday() if today.weekday() > 0 else 0
+
+    for i in range(1, 7):  # Следующие шесть понедельников
+        start_date = today + timedelta(days_ahead) + timedelta(weeks=i-1)
         start_date_str = start_date.strftime('%d-%m-%Y')
         choices.append((start_date_str, start_date_str))
+
     return choices
 
 
@@ -66,7 +80,7 @@ class TimeSelectForm(forms.Form):
 
     time = forms.MultipleChoiceField(choices=[], widget=forms.CheckboxSelectMultiple, label="")
 
-    def __init__(self, week, times, *args, **kwargs):
+    def __init__(self, times, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['time'].choices = [(i, time) for i, time in enumerate(times)]
 

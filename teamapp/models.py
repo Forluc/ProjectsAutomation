@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import User
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .tasks import send_invitation_task
@@ -37,7 +38,7 @@ class Student(User):
     telegram = models.CharField(max_length=70, verbose_name='Телеграм', blank=True)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name} ({self.rank})'
+        return f'{self.username} {self.first_name} {self.last_name} ({self.rank})'
 
     class Meta:
         verbose_name = 'Ученик'
@@ -63,6 +64,11 @@ class Project(models.Model):
         return students_not_invited_count
     students_not_invited.short_description = 'Без приглашений'
 
+    def get_ungrouped_students(self):
+        grouped_students = Team.objects.filter(project=self).values_list('students', flat=True)
+        ungrouped_students = Student.objects.filter(rank=self.rank).exclude(id__in=grouped_students)
+        return ungrouped_students
+
     def __str__(self):
         return self.name
 
@@ -71,30 +77,23 @@ class Project(models.Model):
         verbose_name_plural = 'Проекты'
 
 
-class TimeSlot(models.Model):
-    # Модель используется для хранения временных интервалов
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-
-    def __str__(self):
-        return f'{self.start_time} - {self.end_time}'
-
-
-class StudentAvailability(models.Model):
+class StudentVote(models.Model):
     # Модель используется для определения доступности разных периодов для созвонов
     # Хранит периоды которые ученик выбрал возможными для текущего проекта
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    time_slot = models.JSONField(default=list, verbose_name='Подходящее время')
     week = models.CharField(verbose_name='Дата начала', max_length=20)
     vote_date = models.DateField(verbose_name='Дата выбора')
 
     class Meta:
-        unique_together = ('student', 'time_slot', 'project')
+        unique_together = ('student', 'project')
+        verbose_name = 'Выбор Студентов'
+        verbose_name_plural = 'Выбор Студентов'
 
     def __str__(self):
-        return f'{self.student.username} - {self.time_slot}'
+        return f'{self.project} - {self.student.username} - {self.time_slot}'
 
 
 class Team(models.Model):
@@ -104,7 +103,7 @@ class Team(models.Model):
     start_date = models.DateField(verbose_name='День начала проекта')
     project_manager = models.ForeignKey(ProjectManager, on_delete=models.CASCADE, verbose_name='Менеджер',
                                         related_name='team_managers')
-    info = models.TextField(verbose_name='Командная инфа', max_length=200)
+    info = models.TextField(verbose_name='Командная инфа', max_length=200, blank=True)
 
     def __str__(self):
         return f'{self.project} - {self.project_manager.username} ({self.start_date} | {self.meeting_time})'
@@ -112,21 +111,6 @@ class Team(models.Model):
     class Meta:
         verbose_name = 'Команда'
         verbose_name_plural = 'Команды'
-
-
-class StudentProject(models.Model):
-    # Модель используется для отслеживания, в каких проектах участвовал ученик
-    # что бы в дальнейшем, не отправлять ему повторного приглашения на тот же проект
-
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('student', 'project',)
-
-    def __str__(self):
-        return f'{self.student.username} - {self.project.title}'
 
 
 class Invitation(models.Model):

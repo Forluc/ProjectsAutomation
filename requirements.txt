@@ -3,3 +3,4 @@ environs==9.5.0
 celery==5.3.4
 eventlet==0.33.3
 redis==5.0.1
+requests

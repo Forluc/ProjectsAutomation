@@ -1,16 +1,6 @@
-<!doctype html>
-<html lang="ru">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <title>Страница проекта</title>
-</head>
-<body>
+{% extends "base_generic.html" %}
+{% block title %}Страница проекта{% endblock %}
+{% block content %}
 <div class="container pt-5">
     <div class="card">
         <div class="card-header">
@@ -18,32 +8,19 @@
         </div>
         <div class="card-body">
             <p class="card-text">Описание: {{ project.description }}</p> <!-- Описание проекта -->
-            <p class="card-text">Размер группы: {{ project.student_count }}</p> <!-- Размер группы -->
-            <p class="card-text">Уровень проекта: {{ project.rank }}</p> <!-- Уровень ученика -->
+            {% if team %}
+            <p>Неделя: {{ current_team.start_date }}</p>
+            <p>Время созвона: {{ current_team.meeting_time }}</p>
+            <p>ПМ: {{ current_team.project_manager }}</p>
+            <p>Инфа для команды: {{ current_team.info }}</p>
+
+            {% else %}
+                <p>Вы уже сделали выбор, но Ваша команда ещё формируется:</p>
+                <p>Неделя: {{ week }}</p>
+                <p>Выбранное время: {{ vote }}</p>
+            {% endif %}
             
-            <!-- Вывод списка менеджеров проекта -->
-            <h6 class="card-subtitle mb-2 text-muted">Менеджеры проекта:</h6>
-            <ul class="list-group list-group-flush">
-                {% for manager in project.project_manager.all %}
-                <li class="list-group-item">{{ manager.username }}</li> <!-- Предполагается, что у менеджера есть имя -->
-                {% endfor %}
-            </ul>
-            
-            <!-- Вывод списка недель -->
-            <h6 class="card-subtitle mb-2 text-muted">Недели:</h6>
-            <ul class="list-group list-group-flush">
-                {% for week in project.week %}
-                <li class="list-group-item">{{ week }}</li>
-                {% endfor %}
-            </ul>
-            
-            <p class="card-text">Без приглашений: {{ project.students_not_invited }}</p> <!-- Количество студентов без приглашений -->
         </div>
     </div>
 </div>
-
-<!-- Optional JavaScript; choose one of the two! -->
-<!-- Option 1: Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}
